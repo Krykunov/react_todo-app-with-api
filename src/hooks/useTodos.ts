@@ -2,14 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { filterTodos } from '../utils/services';
 import * as postService from '../api/todos';
 
-import { Todo } from '../types/Todo';
+import { Filters, Todo } from '../types/Todo';
 
 export const useTodos = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [activeFilter, setActiveFilter] = useState<string>('all');
+  const [activeFilter, setActiveFilter] = useState<Filters>(Filters.All);
   const [editingTodos, setEditingTodos] = useState<number[]>([]);
 
   const filtered = useMemo(
@@ -24,7 +24,7 @@ export const useTodos = () => {
       title: title,
       completed: false,
     });
-    setLoading(true);
+    setIsLoading(true);
 
     return postService
       .createTodo(title)
@@ -39,21 +39,21 @@ export const useTodos = () => {
       })
       .finally(() => {
         setTempTodo(null);
-        setLoading(false);
+        setIsLoading(false);
       });
   };
 
   const loadTodos = useCallback(() => {
-    setLoading(true);
+    setIsLoading(true);
     postService
       .getTodos()
       .then(setTodos)
       .catch(() => setErrorMessage('Unable to load todos'))
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   }, []);
 
   const updateTodo = (newTodo: Todo) => {
-    setLoading(true);
+    setIsLoading(true);
     setEditingTodos(current => [...current, newTodo.id]);
 
     return postService
@@ -74,12 +74,12 @@ export const useTodos = () => {
       })
       .finally(() => {
         setEditingTodos([]);
-        setLoading(false);
+        setIsLoading(false);
       });
   };
 
   const deleteTodo = useCallback((id: number) => {
-    setLoading(true);
+    setIsLoading(true);
     setEditingTodos(current => [...current, id]);
     postService
       .deleteTodo(id)
@@ -90,7 +90,7 @@ export const useTodos = () => {
         setErrorMessage('Unable to delete a todo');
         setEditingTodos([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleClearCompleted = () => {
@@ -121,7 +121,7 @@ export const useTodos = () => {
 
   useEffect(() => {
     loadTodos();
-  }, [loadTodos]);
+  }, []);
 
   useEffect(() => {
     if (errorMessage) {
@@ -136,7 +136,7 @@ export const useTodos = () => {
     setActiveFilter,
     tempTodo,
     editingTodos,
-    loading,
+    isLoading,
     errorMessage,
     setErrorMessage,
     addTodo,
