@@ -12,6 +12,8 @@ export const useTodos = () => {
   const [activeFilter, setActiveFilter] = useState<Filters>(Filters.All);
   const [editingTodos, setEditingTodos] = useState<number[]>([]);
 
+  const isAllCompleted = todos.every(todo => todo.completed);
+
   const filtered = useMemo(
     () => filterTodos(todos, activeFilter),
     [todos, activeFilter],
@@ -119,6 +121,17 @@ export const useTodos = () => {
     updateTodo(updatedTodo);
   };
 
+  const handleToggleAll = () => {
+    todos.forEach(todo => {
+      const updatedTodo: Todo = {
+        ...todo,
+        completed: !isAllCompleted,
+      };
+
+      updateTodo(updatedTodo);
+    });
+  };
+
   useEffect(() => {
     loadTodos();
   }, []);
@@ -144,5 +157,7 @@ export const useTodos = () => {
     deleteTodo,
     handleClearCompleted,
     handleToggleCompleted,
+    handleToggleAll,
+    isAllCompleted,
   };
 };

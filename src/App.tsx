@@ -19,13 +19,14 @@ export const App: React.FC = () => {
     activeFilter,
     setActiveFilter,
     editingTodos,
-    loading,
+    isLoading,
     errorMessage,
     setErrorMessage,
     addTodo,
     deleteTodo,
     handleClearCompleted,
     handleToggleCompleted,
+    handleToggleAll,
   } = useTodos();
 
   if (!postService.USER_ID) {
@@ -46,8 +47,9 @@ export const App: React.FC = () => {
         <Header
           todos={todos}
           onCreateTodo={addTodo}
-          loading={loading}
+          isLoading={isLoading}
           setErrorMessage={setErrorMessage}
+          handleToggleAll={handleToggleAll}
         />
 
         <section className="todoapp__main" data-cy="TodoList">

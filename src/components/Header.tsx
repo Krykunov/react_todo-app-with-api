@@ -9,6 +9,7 @@ type Props = {
   onCreateTodo: (todoTitle: string) => Promise<void>;
   isLoading: boolean;
   setErrorMessage: (message: string) => void;
+  handleToggleAll: () => void;
 };
 
 const Header: React.FC<Props> = ({
@@ -16,16 +17,22 @@ const Header: React.FC<Props> = ({
   onCreateTodo,
   isLoading,
   setErrorMessage,
+  handleToggleAll,
 }) => {
+  const isAllCompleted = todos.every(todo => todo.completed);
+
   return (
     <header className="todoapp__header">
-      <button
-        type="button"
-        className={cn('todoapp__toggle-all', {
-          active: todos.length > 0 && todos.every(todo => todo.completed),
-        })}
-        data-cy="ToggleAllButton"
-      />
+      {todos.length > 0 && (
+        <button
+          type="button"
+          className={cn('todoapp__toggle-all', {
+            active: isAllCompleted,
+          })}
+          data-cy="ToggleAllButton"
+          onClick={handleToggleAll}
+        />
+      )}
       <Form
         onCreateTodo={onCreateTodo}
         isLoading={isLoading}
