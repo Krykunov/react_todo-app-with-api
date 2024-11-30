@@ -10,6 +10,7 @@ type Props = {
   isLoading: boolean;
   setErrorMessage: (message: string) => void;
   handleToggleAll: () => void;
+  renamingTodo: number | null;
 };
 
 const Header: React.FC<Props> = ({
@@ -18,6 +19,7 @@ const Header: React.FC<Props> = ({
   isLoading,
   setErrorMessage,
   handleToggleAll,
+  renamingTodo,
 }) => {
   const isAllCompleted = todos.every(todo => todo.completed);
 
@@ -37,6 +39,7 @@ const Header: React.FC<Props> = ({
         onCreateTodo={onCreateTodo}
         isLoading={isLoading}
         setErrorMessage={setErrorMessage}
+        renamingTodo={renamingTodo}
       />
     </header>
   );

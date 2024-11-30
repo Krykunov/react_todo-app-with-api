@@ -3,7 +3,7 @@
 
 import cn from 'classnames';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Todo } from '../types/Todo';
 
 type Props = {
@@ -11,6 +11,9 @@ type Props = {
   onDelete: (id: number) => void;
   editingTodos: number[];
   handleToggleCompleted: (id: number) => void;
+  renamingTodo: number | null;
+  setRenamingTodo: (id: number | null) => void;
+  handleUpdateTodoTitle: (id: number, title: string) => void;
 };
 
 const TodoItem: React.FC<Props> = ({
@@ -18,7 +21,16 @@ const TodoItem: React.FC<Props> = ({
   onDelete,
   editingTodos,
   handleToggleCompleted,
+  renamingTodo,
+  setRenamingTodo,
+  handleUpdateTodoTitle,
 }) => {
+  const [inputValue, setInputValue] = useState<string>('');
+
+  const isRenaming = renamingTodo === todo.id;
+
+  const todoField = useRef<HTMLInputElement>(null);
+
   const handleDelete = () => {
     onDelete(todo.id);
   };
@@ -26,6 +38,55 @@ const TodoItem: React.FC<Props> = ({
   const handleToggle = () => {
     handleToggleCompleted(todo.id);
   };
+
+  const handleEditTodo = () => {
+    setRenamingTodo(todo.id);
+    setInputValue(todo.title);
+  };
+
+  const handleChangeValue = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmitChange = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (inputValue === '') {
+      onDelete(todo.id);
+
+      return;
+    }
+
+    if (inputValue !== todo.title) {
+      handleUpdateTodoTitle(todo.id, inputValue);
+      setRenamingTodo(null);
+
+      return;
+    }
+
+    setRenamingTodo(null);
+  };
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setRenamingTodo(null);
+
+        return;
+      }
+    };
+
+    window.addEventListener('keyup', handleEsc);
+
+    return () => {
+      window.removeEventListener('keyup', handleEsc);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (todoField.current) {
+      todoField.current.focus();
+    }
+  }, [renamingTodo]);
 
   return (
     <div
@@ -43,18 +104,40 @@ const TodoItem: React.FC<Props> = ({
         />
       </label>
 
-      <span data-cy="TodoTitle" className="todo__title">
-        {todo.title}
-      </span>
+      {!isRenaming && (
+        <span
+          data-cy="TodoTitle"
+          className="todo__title"
+          onDoubleClick={handleEditTodo}
 
-      <button
-        type="button"
-        className="todo__remove"
-        data-cy="TodoDelete"
-        onClick={handleDelete}
-      >
-        ×
-      </button>
+          // onClick={handleEditTodo}
+        >
+          {todo.title}
+        </span>
+      )}
+
+      {isRenaming && (
+        <form onSubmit={handleSubmitChange} onBlur={handleSubmitChange}>
+          <input
+            ref={todoField}
+            className="todo__title-field"
+            type="text"
+            value={inputValue}
+            onChange={handleChangeValue}
+          />
+        </form>
+      )}
+
+      {!isRenaming && (
+        <button
+          type="button"
+          className="todo__remove"
+          data-cy="TodoDelete"
+          onClick={handleDelete}
+        >
+          ×
+        </button>
+      )}
 
       <div
         data-cy="TodoLoader"

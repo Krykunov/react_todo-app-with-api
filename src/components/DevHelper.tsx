@@ -14,12 +14,12 @@ const fakeTodos: string[] = [
   'fugiat veniam minus',
   'et porro tempora',
   'laboriosam mollitia et enim ',
-  ' quasi adipisci quia provident illum',
-  'qui ullam ratione quibusdam  quia omnis',
-  'illo expedita  quia in',
+  'quasi adipisci quia provident illum',
+  'qui ullam ratione quibusdam quia omnis',
+  'illo expedita quia in',
   'quo adipisci enim quam ut ab',
   'molestiae perspiciatis ipsa',
-  'illo est ratione  quia maiores aut',
+  'illo est ratione quia maiores aut',
 ];
 
 const DevHelper: React.FC<Props> = ({

@@ -11,6 +11,7 @@ export const useTodos = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [activeFilter, setActiveFilter] = useState<Filters>(Filters.All);
   const [editingTodos, setEditingTodos] = useState<number[]>([]);
+  const [renamingTodo, setRenamingTodo] = useState<number | null>(null);
 
   const isAllCompleted = todos.every(todo => todo.completed);
 
@@ -132,6 +133,23 @@ export const useTodos = () => {
     });
   };
 
+  const handleUpdateTodoTitle = (id: number, title: string) => {
+    const newTodo = todos.find(todo => todo.id === id);
+
+    if (!newTodo) {
+      setErrorMessage('Todo not found');
+
+      return;
+    }
+
+    const updatedTodo: Todo = {
+      ...newTodo,
+      title,
+    };
+
+    updateTodo(updatedTodo);
+  };
+
   useEffect(() => {
     loadTodos();
   }, []);
@@ -159,5 +177,8 @@ export const useTodos = () => {
     handleToggleCompleted,
     handleToggleAll,
     isAllCompleted,
+    renamingTodo,
+    setRenamingTodo,
+    handleUpdateTodoTitle,
   };
 };

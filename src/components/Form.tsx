@@ -4,19 +4,21 @@ type Props = {
   onCreateTodo: (todoTitle: string) => Promise<void>;
   isLoading: boolean;
   setErrorMessage: (message: string) => void;
+  renamingTodo: number | null;
 };
 
 const Form: React.FC<Props> = ({
   onCreateTodo,
   isLoading,
   setErrorMessage,
+  renamingTodo,
 }) => {
   const [todoTitle, setTodoTitle] = useState('');
 
   const titleField = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (titleField.current && !isLoading) {
+    if (titleField.current && !isLoading && !renamingTodo) {
       titleField.current.focus();
     }
   }, [isLoading]);

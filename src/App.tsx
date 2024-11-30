@@ -4,10 +4,10 @@
 import * as postService from './api/todos';
 import { UserWarning } from './UserWarning';
 import TodoItem from './components/TodoItem';
+import TempTodoItem from './components/TempTodoItem';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ErrorNotification from './components/ErrorNotification';
-import DevHelper from './components/DevHelper';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useTodos } from './hooks/useTodos';
 
@@ -27,6 +27,9 @@ export const App: React.FC = () => {
     handleClearCompleted,
     handleToggleCompleted,
     handleToggleAll,
+    renamingTodo,
+    setRenamingTodo,
+    handleUpdateTodoTitle,
   } = useTodos();
 
   if (!postService.USER_ID) {
@@ -35,13 +38,6 @@ export const App: React.FC = () => {
 
   return (
     <div className="todoapp">
-      {/*'remove before deploy !!!'*/}
-      <DevHelper
-        onSetFakeTodos={addTodo}
-        onDeleteAllTodos={deleteTodo}
-        todos={todos}
-      />
-      {/*'remove before deploy !!!'*/}
       <h1 className="todoapp__title">todos</h1>
       <div className="todoapp__content">
         <Header
@@ -50,6 +46,7 @@ export const App: React.FC = () => {
           isLoading={isLoading}
           setErrorMessage={setErrorMessage}
           handleToggleAll={handleToggleAll}
+          renamingTodo={renamingTodo}
         />
 
         <section className="todoapp__main" data-cy="TodoList">
@@ -62,18 +59,15 @@ export const App: React.FC = () => {
                   onDelete={deleteTodo}
                   editingTodos={editingTodos}
                   handleToggleCompleted={handleToggleCompleted}
+                  renamingTodo={renamingTodo}
+                  setRenamingTodo={setRenamingTodo}
+                  handleUpdateTodoTitle={handleUpdateTodoTitle}
                 />
               </CSSTransition>
             ))}
             {tempTodo && (
               <CSSTransition key={0} timeout={300} classNames="item">
-                <TodoItem
-                  key={tempTodo.id}
-                  todo={tempTodo}
-                  onDelete={deleteTodo}
-                  editingTodos={editingTodos}
-                  handleToggleCompleted={handleToggleCompleted}
-                />
+                <TempTodoItem todo={tempTodo} editingTodos={editingTodos} />
               </CSSTransition>
             )}
           </TransitionGroup>
