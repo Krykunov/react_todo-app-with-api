@@ -109,8 +109,6 @@ const TodoItem: React.FC<Props> = ({
           data-cy="TodoTitle"
           className="todo__title"
           onDoubleClick={handleEditTodo}
-
-          // onClick={handleEditTodo}
         >
           {todo.title}
         </span>

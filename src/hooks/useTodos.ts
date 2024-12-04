@@ -30,16 +30,12 @@ export const useTodos = () => {
     setIsLoading(true);
 
     try {
-      try {
-        const newTodo = await postService.createTodo(title);
+      const newTodo = await postService.createTodo(title);
 
-        setEditingTodos(current => [...current, 0]);
-
-        setTodos(currentTodos => [...currentTodos, newTodo]);
-      } catch {
-        setErrorMessage('Unable to add a todo');
-        throw new Error('Unable to add a todo');
-      }
+      setEditingTodos(current => [...current, 0]);
+      setTodos(currentTodos => [...currentTodos, newTodo]);
+    } catch {
+      setErrorMessage('Unable to add a todo');
     } finally {
       setTempTodo(null);
       setIsLoading(false);
@@ -64,39 +60,36 @@ export const useTodos = () => {
     setEditingTodos(current => [...current, newTodo.id]);
 
     try {
-      try {
-        await postService.updateTodo(newTodo);
-        setTodos(currentTodos => {
-          const newTodos = [...currentTodos];
-          const index = newTodos.findIndex(todo => todo.id === newTodo.id);
+      await postService.updateTodo(newTodo);
+      setTodos(currentTodos => {
+        const newTodos = [...currentTodos];
+        const index = newTodos.findIndex(todo => todo.id === newTodo.id);
 
-          newTodos.splice(index, 1, newTodo);
+        newTodos.splice(index, 1, newTodo);
 
-          return newTodos;
-        });
-      } catch (error) {
-        setErrorMessage('Unable to update a todo');
-        throw new Error();
-      }
+        return newTodos;
+      });
+    } catch (error) {
+      setErrorMessage('Unable to update a todo');
     } finally {
       setEditingTodos([]);
       setIsLoading(false);
     }
   }, []);
 
-  const deleteTodo = useCallback((id: number) => {
+  const deleteTodo = useCallback(async (id: number) => {
     setIsLoading(true);
     setEditingTodos(current => [...current, id]);
-    postService
-      .deleteTodo(id)
-      .then(() => {
-        setTodos(currentTodos => currentTodos.filter(todo => todo.id !== id));
-      })
-      .catch(() => {
-        setErrorMessage('Unable to delete a todo');
-        setEditingTodos([]);
-      })
-      .finally(() => setIsLoading(false));
+
+    try {
+      await postService.deleteTodo(id);
+      setTodos(currentTodos => currentTodos.filter(todo => todo.id !== id));
+    } catch {
+      setErrorMessage('Unable to delete a todo');
+      setEditingTodos([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const handleClearCompleted = () => {

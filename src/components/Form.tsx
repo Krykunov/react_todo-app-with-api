@@ -21,7 +21,7 @@ const Form: React.FC<Props> = ({
     if (titleField.current && !isLoading && !renamingTodo) {
       titleField.current.focus();
     }
-  }, [isLoading]);
+  }, [isLoading, renamingTodo]);
 
   const handleTitleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTodoTitle(event.target.value);
