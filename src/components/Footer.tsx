@@ -17,6 +17,7 @@ const Footer: React.FC<Props> = ({
   handleClearCompleted,
 }) => {
   const activeTodos = todos.filter(todo => !todo.completed);
+  const isClearButtonShown = todos.every(todo => !todo.completed);
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">
@@ -25,23 +26,21 @@ const Footer: React.FC<Props> = ({
       </span>
 
       <nav className="filter" data-cy="Filter">
-        {Object.values(Filters).map(filterItem => {
-          return (
-            <FilterButton
-              key={filterItem}
-              activeFilter={activeFilter}
-              setActiveFilter={setActiveFilter}
-              filterItem={filterItem}
-            />
-          );
-        })}
+        {Object.values(Filters).map(filterItem => (
+          <FilterButton
+            key={filterItem}
+            activeFilter={activeFilter}
+            setActiveFilter={setActiveFilter}
+            filterItem={filterItem}
+          />
+        ))}
       </nav>
 
       <button
         type="button"
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
-        disabled={todos.every(todo => !todo.completed)}
+        disabled={isClearButtonShown}
         onClick={handleClearCompleted}
       >
         Clear completed
